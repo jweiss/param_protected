@@ -12,13 +12,18 @@ module ParamProtected
     module ClassMethods
       
       def param_protected(*params)
-        if params.last.is_a?(Hash)
+        actions = nil
+        if params.size > 1 and params.last.is_a?(Hash)
           actions = params.pop
         end
         Protector.instance(self).declare_protection(params, actions, BLACKLIST)
       end
       
-      def param_accessible(params, actions = nil)
+      def param_accessible(*params)
+        actions = nil
+        if params.size > 1 and params.last.is_a?(Hash)
+          actions = params.pop
+        end
         Protector.instance(self).declare_protection(params, actions, WHITELIST)
       end
       
