@@ -3,18 +3,27 @@ module ParamProtected
   
     def self.instance(controller)
       unless controller.respond_to?(:pp_protector)
-        controller.class_eval{ @pp_protector = Protector.new }
+        controller.class_eval{ @pp_protector = Protector.new(controller._param_protected_options) }
         controller.meta_eval { attr_reader :pp_protector }
       end
       controller.pp_protector
     end
     
-    def initialize
+    def initialize(options = {})
       @protections = []
+      @options = options
+    end
+
+    def add_default_params(params, exclusivity)
+      if @options[:accessible_defaults] and exclusivity == WHITELIST
+        params + [:id, :controller, :action] 
+      else
+        params
+      end
     end
     
     def declare_protection(params, actions, exclusivity)
-      params  = normalize_params(params)
+      params  = normalize_params(add_default_params(params, exclusivity))
       actions = normalize_actions(actions)
       @protections << [params, actions, exclusivity]
     end

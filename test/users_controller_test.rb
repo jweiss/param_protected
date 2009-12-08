@@ -18,5 +18,4 @@ class UsersControllerTest < ActionController::TestCase
     get :update, PARAMS
     assert_equal EXPECTED_PARAMS, params
   end
-  
 end

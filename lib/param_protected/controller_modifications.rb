@@ -3,6 +3,8 @@ module ParamProtected
     
     def self.extended(action_controller)
       action_controller.class_eval do
+        class_inheritable_accessor :_param_protected_options
+        self._param_protected_options = {}
         extend  ClassMethods
         include InstanceMethods
         alias_method_chain :params, :protection
@@ -27,6 +29,9 @@ module ParamProtected
         Protector.instance(self).declare_protection(params, actions, WHITELIST)
       end
       
+      def param_accessible_defaults
+        _param_protected_options[:accessible_defaults] = true
+      end
     end
     
     module InstanceMethods
@@ -40,12 +45,9 @@ module ParamProtected
         
         if action_name.blank?
           params_without_protection
-        elsif @params_protected
-          @params_protected
         else
-          @params_protected = Protector.instance(self.class).protect(params_without_protection, action_name)
+          @params_protected ||= Protector.instance(self.class).protect(params_without_protection, action_name)
         end
-        
       end
       
     end
