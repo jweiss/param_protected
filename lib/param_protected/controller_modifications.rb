@@ -11,7 +11,10 @@ module ParamProtected
     
     module ClassMethods
       
-      def param_protected(params, actions = nil)
+      def param_protected(*params)
+        if params.last.is_a?(Hash)
+          actions = params.pop
+        end
         Protector.instance(self).declare_protection(params, actions, BLACKLIST)
       end
       
