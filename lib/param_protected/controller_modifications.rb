@@ -13,19 +13,22 @@ module ParamProtected
     
     module ClassMethods
       
-      def param_protected(*params)
+      def _param_actions(params)
         actions = nil
-        if params.size > 1 and params.last.is_a?(Hash)
-          actions = params.pop
+        if params.last.is_a?(Hash)
+          actions = {:only => params.last.delete(:only)} if params.last[:only]
+          actions = {:except => params.last.delete(:except)} if params.last[:except]
         end
+        actions
+      end
+      
+      def param_protected(*params)
+        actions = _param_actions(params)
         Protector.instance(self).declare_protection(params, actions, BLACKLIST)
       end
       
       def param_accessible(*params)
-        actions = nil
-        if params.size > 1 and params.last.is_a?(Hash)
-          actions = params.pop
-        end
+        actions = _param_actions(params)
         Protector.instance(self).declare_protection(params, actions, WHITELIST)
       end
       
