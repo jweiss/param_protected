@@ -16,7 +16,7 @@ module ParamProtected
 
     def add_default_params(params, exclusivity)
       if @options[:accessible_defaults] and exclusivity == WHITELIST
-        params + [:id, :controller, :action] 
+        params + [:id, :controller, :action, ActionController::Base.request_forgery_protection_token]
       else
         params
       end
