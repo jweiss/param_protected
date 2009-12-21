@@ -46,10 +46,11 @@ module ParamProtected
         # to know that we're really in an action and @_params actually contains something.  Then we can filter
         # and cache it.
         
-        if action_name.blank?
+        protector = Protector.instance(self.class)
+        if action_name.blank? or protector.nil?
           params_without_protection
         else
-          @params_protected ||= Protector.instance(self.class).protect(params_without_protection, action_name)
+          @params_protected ||= protector.protect(params_without_protection, action_name)
         end
       end
       
